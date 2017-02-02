@@ -1,0 +1,49 @@
+
+{% load staticfiles %}
+<html>
+<head>
+
+    <link rel="stylesheet" href="{% static 'css/master.css' %}" type="text/css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="{% static 'css/tabs.css' %}" type="text/css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="{% static 'css/grid-1080.css' %}" type="text/css" media="screen" charset="utf-8" />
+    {% block head %}{% endblock %}
+
+</head>
+<body>
+
+<div id="wrapper" class="span-12">
+	<div id="pages">
+		<ul>
+			<li><a href="/sq/">Home</a></li>
+
+		</ul>
+	</div>
+
+	<div id="header" class="col last span-12">
+		<h1><span class="amp"> Sequence </span> Differ</h1>
+
+        <h3><span class="by">by</span> Joseph</h3>
+
+	</div>
+
+
+
+        {% block content %}{% endblock %}
+
+
+    </div>
+
+
+
+
+	<div id="footer">
+		<p id="foo"><em>J</em>OSEPH</p>
+
+		<p>Copyright © 2016  Philips . All rights reserved.</p>
+	</div>
+
+</div>
+
+</body>
+<script>{% block script %}{% endblock %}</script>
+</html>

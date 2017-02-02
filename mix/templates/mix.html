@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+
+ <section class="wrapper">
+          	<h3><i class="fa fa-angle-right"></i> Mix Community</h3>
+
+          	<!-- BASIC FORM ELELEMNTS -->
+          	<div class="row mt">
+          		<div class="col-lg-12">
+          			<div class="form-panel">
+                  	  <h4 class="mb"><i class="fa fa-angle-right"></i> Choose Community</h4>
+                        <p><button class="btn btn-theme" id="addScnt" >ADD</button></p>
+                      <form class="form-inline" method="post" role="form" action="./download/" id="form">
+                          {% csrf_token %}
+                          <p>
+                          <input type="number" class="form-control" name="sum" placeholder="In All" />
+                          </p>
+                          <div id="f_group">
+                              <p id="input_field">
+                              <select class="form-control" id="cname" name="cname_1" placeholder="community name">
+                              <option value="E_faecium">E_faecium</option>
+                              <option value="E_cloacae">E_cloacae</option>
+                              </select>
+                              <input type="number" class="form-control" step="0.1" min="0" max="1" id="p" name="p_1" placeholder="%"/>
+                              </p>
+                          </div>
+                          <p>
+                          <input type="submit" value="Submit" />
+                          </p>
+                      </form>
+          			</div><!-- /form-panel -->
+          		</div><!-- /col-lg-12 -->
+          	</div><!-- /row -->
+
+
+</section>
+
+{% endblock %}
+
+{% block script %}
+
+$(function() {
+        var form = $('#f_group');
+        var i = $('#f_group p').size() + 1;
+
+        $('#addScnt').click(function() {
+                var div=$("#input_field").clone()
+                div.find('#cname').attr('name','cname_'+i).val('');
+                div.find('#p').attr('name','p_'+i).val('');
+                div.appendTo(form)
+                i++;
+                return false;
+        });
+
+        $('#remScnt').click(function() {
+                if( i > 2 ) {
+                        $(this).parents('p').remove();
+                        i--;
+                }
+                return false;
+        });
+});
+
+
+
+
+{% endblock %}

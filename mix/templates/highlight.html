@@ -1,0 +1,110 @@
+{% load staticfiles %}
+{% load trialparser %}
+<html>
+<head>
+    <script src="{% static 'js/hw/jquery-1.12.3.js' %}"></script>
+    <script src="{% static 'js/hw/mark.min.js' %}"></script>
+    <script src="{% static 'js/hw/dist/Chart.bundle.js' %}"></script>
+    <script src="{% static 'js/hw/jquery.dataTables.min.js' %}" ></script>
+
+
+
+    <link rel="stylesheet" href="{% static 'css/jquery.dataTables.min.css' %}" type="text/css" media="screen" charset="utf-8" />
+
+
+
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+<div>
+{% for s in sq %}
+
+<h3>{{ s.isolate }}</h3>
+
+<table>
+{% for c in s.qlist %}
+    <tr>
+    {% def_highlight c.con ref as line %}
+    <td>{{ line | safe}}</td>
+    <td>{{ c.number }}</td>
+    <td>{% if c.same %}Same to Reference{% endif %}  </td>
+    </tr>
+{% endfor %}
+{% endfor %}
+</table>
+</div>
+<div>
+<table>
+<tr>
+    <th>TYPE</th>
+    <th>Squence</th>
+
+</tr>
+{% for key,value in types.items %}
+ <tr>
+    <td>T{{ value  }}</td>
+    <td>{% def_highlight key ref as line %}{{ line | safe}}</td>
+
+  </tr>
+
+{% endfor %}
+
+</table>
+
+<table id="dataTable" class="hover" cellspacing="0" width="100%">
+   <thead>
+    <tr>
+    <th>isolate</th>
+    <th>type</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% for i in summary %}
+ <tr>
+    <td>{{ i.name  }}</td>
+    <td>{{ i.same }}R
+    {% if i.type %}
+    {% for key,value in i.type.items %}
+     ,{{ value }}T{{ key }}
+    {% endfor %}
+    {% endif %}
+    </td>
+
+  </tr>
+
+{% endfor %}
+    </tbody>
+
+
+</table>
+
+
+
+</div>
+
+</body>
+<script>
+    $(document).ready(function () {
+$('#dataTable').dataTable();
+});
+</script>
+
+
+</html>

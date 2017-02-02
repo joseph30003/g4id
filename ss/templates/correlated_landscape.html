@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Load c3.css -->
+    <link href="{% static 'css/c3.css' %}" rel="stylesheet" type="text/css">
+
+    <!-- Load d3.js and c3.js -->
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="{% static 'js/c3.min.js' %}"></script>
+
+
+
+</head>
+<body>
+<form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+    <input class="button" type="submit" value="Submit" />
+
+</form>
+{% if rs %}
+<div id="chart"></div>
+
+<script>
+var chart = c3.generate({
+    bindto: '#chart',
+    data: {
+        x: 'x',
+        columns: {{ rs | safe }}
+    }
+});
+
+
+</script>
+{% endif %}
+
+
+</body>
+</html>

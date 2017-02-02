@@ -1,0 +1,134 @@
+{% load coordination %}
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sample Species</title>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+    <script src="http://underscorejs.org/underscore-min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.3.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>
+
+
+      body {
+        background-color: black;
+
+      }
+      circle {
+        stroke: white;
+        stroke-width: 1px;
+        opacity: .8;
+
+      }
+
+
+
+      .btn-group {
+        margin-left: 390px;
+      }
+      text {
+        fill: white;
+        font-size: 10px;
+      }
+
+.box {
+
+  margin: 20px 20px 20px 20px;
+  background: rgba(255,255,255,0.5);
+  padding: 35px;
+  border: 2px solid #fff;
+  border-radius: 20px/20px;
+  background-clip: padding-box;
+  text-align: center;
+}
+.s_box {
+background: rgba(255,255,275,0.5);
+}
+
+.button {
+  font-size: 1em;
+  padding: 10px;
+  color: #fff;
+  border: 2px solid #06D85F;
+  border-radius: 20px/20px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+.button:hover {
+  background: #06D85F;
+}
+
+
+</style>
+</head>
+<body>
+<div class ="container">
+    <div class="row">
+<div class="col-md-11 box">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+    <input class="button" type="submit" value="Submit" />
+
+    </form>
+
+
+
+</div>
+<div class = "container" >
+<div id="canvas" class="row">
+<div class="col-md-4" style = "background-color: rgba(255,255,255,0.5);" >
+    <div><h3 style="color:white">Virus</h3></div>
+    <div>
+    <svg height="{{ virus | max_height }}">
+      {% for l in virus %}
+
+            <circle cx="50%" cy="{{l.cy}}" r="{{ l.r }}" fill="#990000" ></circle>
+            <text x="50%" y="{{l.cy}}" fill="white" text-anchor="middle" dy="0.3em">{{ l.count }}</text>
+            <text x="50%" dy="{{l | name_coordination }}" fill="white" text-anchor="middle" >{{ l.name }}</text>
+
+        {% endfor %}
+    </svg>
+        </div>
+</div>
+<div class="col-md-4" style = "background-color: rgba(255,255,255,0.3);">
+    <div><h3 style="color:white">Bacteria</h3></div>
+    <div>
+    <svg height="{{ bacteria | max_height }}">
+    {% for l in bacteria %}
+            <circle cx="50%" cy="{{l.cy}}" r="{{ l.r }}" fill="#339966" ></circle>
+            <text x="50%" y="{{l.cy}}" fill="white" text-anchor="middle" dy="0.3em">{{ l.count }}</text>
+            <text x="50%" dy="{{l | name_coordination }}" fill="white" text-anchor="middle" >{{ l.name }}</text>
+    {% endfor %}
+        </svg>
+        </div>
+</div>
+<div class="col-md-4" style = "background-color: rgba(255,255,255,0.5);">
+    <div><h3 style="color:white">Fungi</h3></div>
+    <div>
+    <svg height="{{ fungi | max_height }}" >
+     {% for l in fungi %}
+            <circle cx="50%" cy="{{l.cy}}" r="{{ l.r }}" fill="#0066ff" ></circle>
+            <text x="50%" y="{{l.cy}}" fill="white" text-anchor="middle" dy="0.3em">{{ l.count }}</text>
+            <text x="50%" dy="{{l | name_coordination }}" fill="white" text-anchor="middle" >{{ l.name }}</text>
+
+        {% endfor %}
+        </svg>
+    </div>
+</div>
+
+
+</div>
+</div>
+
+</div>
+    </div>
+</body>
+
+
+</html>

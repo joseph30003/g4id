@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-1.12.3.js"></script>
+
+
+
+
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js" ></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.12/sorting/natural.js" ></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" type="text/css" media="screen" charset="utf-8" />
+
+   <style>
+  div.dataTables_wrapper {
+        margin-bottom: 3em;
+    }
+table {
+    font-family: monospace;
+    font-size:14px;
+    border-collapse: collapse;
+    width: 100%;
+
+
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    word-wrap: break-word;
+}
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+hr {
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+}
+</style>
+
+</head>
+<body>
+{% for obj in objs %}
+<h5>{{ obj.target }}</h5>
+
+<table>
+    <thead>
+    <tr>
+    <th>True Positive</th>
+    <th>False Positive</th>
+    <th>False Negative</th>
+    <th>True Negative</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>{{ obj.statics.tp }}</td>
+        <td>{{ obj.statics.fp }}</td>
+        <td>{{ obj.statics.fn }}</td>
+        <td>{{ obj.statics.tn }}</td>
+    </tr>
+    </tbody>
+</table>
+
+
+
+<div>
+    <h4>Table</h4>
+<table id="table_{{ obj.target }}" class="display" cellspacing="0" width="100%">
+   <thead>
+    <tr>
+    <th>sample</th>
+    <th>PCR</th>
+    <th>KraKen</th>
+    <th>Correlated</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for i in obj.rs_list %}
+
+ <tr>
+    <td><a href="./{{ i.s_id }}/">{{ i.s_name  }}</a></td>
+    <td>{{ i.PCR }}</td>
+    <td>{{ i.karen }}</td>
+    <td>{{ i.cr }}</td>
+  </tr>
+
+
+{% endfor %}
+    </tbody>
+
+
+</table>
+
+
+</div>
+{% endfor %}
+<script>
+
+    $(document).ready(function() {
+    $('table.display').DataTable({
+ columnDefs: [
+       { type: 'natural', targets: 0 }
+     ]
+
+});
+} );
+
+</script>
+
+
+
+</body>
+</html>

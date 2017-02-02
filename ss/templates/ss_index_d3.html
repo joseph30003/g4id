@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sample Species</title>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+    <script src="http://underscorejs.org/underscore-min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.3.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>
+
+
+      body {
+        background-color: black;
+        
+      }
+      circle {
+        stroke: white;
+        stroke-width: 1px;
+        opacity: .8;
+      }
+      .btn-group {
+        margin-left: 390px;
+      }
+      .label {
+        fill: white;
+        font-size: 16px;
+      }
+
+.box {
+  
+  margin: 20px 20px 20px 20px;
+  background: rgba(255,255,255,0.5);
+  padding: 35px;
+  border: 2px solid #fff;
+  border-radius: 20px/20px;
+  background-clip: padding-box;
+  text-align: center;
+}
+
+.button {
+  font-size: 1em;
+  padding: 10px;
+  color: #fff;
+  border: 2px solid #06D85F;
+  border-radius: 20px/20px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+.button:hover {
+  background: #06D85F;
+}
+
+
+</style>
+</head>
+<body>
+<div class ="container-fluid">
+    <div class="row">
+<div class="col-md-10 box">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+    <input class="button" type="submit" value="Submit" />
+
+    </form>
+
+
+
+</div>
+{% if data %}
+<div id="canvas" class="col-md-8 "></div>
+{% endif %}
+</div>
+    </div>
+</body>
+
+<script>
+
+		data = {{ data | safe }}
+
+
+        var width = window.innerWidth-100; height =window.innerWidth-100;
+
+        var fill = d3.scale.ordinal()
+          .domain(["virus", "bacteria", "fungi"])
+          .range(["#d84b2a", "#beccae", "#7aa25c"])
+
+        var svg = d3.select("#canvas").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        var max_amount = d3.max(data, function (d) { return parseInt(d.count)})
+        var radius_scale = d3.scale.pow().exponent(0.5).domain([0, max_amount]).range([height*2/1000, height*85/1000])
+
+        _.each(data, function (elem) {
+          elem.radius = radius_scale(elem.count)*.8;
+          elem.all = 'all';
+          elem.x = _.random(0, width);
+          elem.y = _.random(0, height);
+        })
+
+        var padding = 4;
+        var maxRadius = d3.max(_.pluck(data, 'radius'));
+
+        var type_centers = {
+          "virus": {name:"virus", x: width*125/1000, y: height*300/1000},
+          "bacteria": {name:"bacteria", x: width*525/1000, y: height*300/1000},
+          "fungi": {name:"fungi", x: width*875/1000, y: width*300/1000}
+        }
+
+        var all_center = { "all": {name:"All Grants", x: 500, y: 300}};
+
+        var nodes = svg.selectAll("circle")
+          .data(data);
+
+        nodes.enter().append("circle")
+          .attr("class", "node")
+          .attr("cx", function (d) { return d.x; })
+          .attr("cy", function (d) { return d.y; })
+          .attr("r", 1)
+          .style("fill", function (d) { return fill(d.type); })
+          .on("mouseover", function (d) { showPopover.call(this, d); })
+          .on("mouseout", function (d) { removePopovers(); })
+
+        nodes.transition().delay(500).duration(5000)
+          .attr("r", function (d) { return d.radius; })
+
+        var force = d3.layout.force();
+
+        draw('type');
+
+        function draw (varname) {
+          var foci = varname === "all" ? all_center: type_centers;
+          force.on("tick", tick(foci, varname));
+          labels(foci)
+          force.start();
+        }
+
+        function tick (foci, varname) {
+          return function (e) {
+            for (var i = 0; i < data.length; i++) {
+              var o = data[i];
+              var f = foci[o[varname]];
+              o.y += (f.y - o.y) * e.alpha;
+              o.x += (f.x - o.x) * e.alpha;
+            }
+            nodes
+              .each(collide(.1))
+              .attr("cx", function (d) { return d.x; })
+              .attr("cy", function (d) { return d.y; });
+          }
+        }
+
+        function labels (foci) {
+          svg.selectAll(".label").remove();
+
+          svg.selectAll(".label")
+          .data(_.toArray(foci)).enter().append("text")
+          .attr("class", "label")
+          .text(function (d) { return d.name })
+          .attr("transform", function (d) {
+            return "translate(" + (d.x - ((d.name.length)*3)) + ", " + (d.y - 275) + ")";
+          });
+        }
+
+        function removePopovers () {
+          $('.popover').each(function() {
+            $(this).remove();
+          });
+        }
+
+        function showPopover (d) {
+          $(this).popover({
+            placement: 'auto top',
+            container: 'body',
+            trigger: 'manual',
+            html : true,
+            content: function() {
+              return "name: " + d.name + "<br/>count: " + d3.format(",")(+d.count); }
+          });
+          $(this).popover('show')
+        }
+
+        function collide(alpha) {
+          var quadtree = d3.geom.quadtree(data);
+          return function(d) {
+            var r = d.radius + maxRadius + padding,
+                nx1 = d.x - r,
+                nx2 = d.x + r,
+                ny1 = d.y - r,
+                ny2 = d.y + r;
+            quadtree.visit(function(quad, x1, y1, x2, y2) {
+              if (quad.point && (quad.point !== d)) {
+                var x = d.x - quad.point.x,
+                    y = d.y - quad.point.y,
+                    l = Math.sqrt(x * x + y * y),
+                    r = d.radius + quad.point.radius + padding;
+                if (l < r) {
+                  l = (l - r) / l * alpha;
+                  d.x -= x *= l;
+                  d.y -= y *= l;
+                  quad.point.x += x;
+                  quad.point.y += y;
+                }
+              }
+              return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+            });
+          };
+        }
+
+
+
+</script>
+</html>

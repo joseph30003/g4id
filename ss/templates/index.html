@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload</title>
+</head>
+<body>
+<div>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+    <input type="submit" value="Submit" />
+
+    </form>
+    {%if fungi %}
+    <div>
+        <h2>Fungi</h2>
+        {% for f in fungi %}
+        <h5>f.species__name</h5>
+        <h5>f.count</h5>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+</body>
+</html>

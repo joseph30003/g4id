@@ -1,0 +1,23 @@
+{% extends "sq/base.html" %}
+
+{% load staticfiles %}
+
+
+
+{% block content %}
+<div id="content" class="col span-9" >
+    <div class="col last span-9">
+		<h4>{% block title %}{% endblock %}</h4>
+    </div>
+
+    {% block content_sub %}{% endblock %}
+
+</div>
+    <div id="sidebar" class="col last span-3">
+
+		{% block sidebar %}{% endblock %}
+
+	</div>
+
+
+{% endblock %}

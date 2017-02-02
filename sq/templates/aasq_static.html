@@ -1,0 +1,302 @@
+{% extends "sq/base_rightsidebar.html" %}
+{% load squ_render %}
+{% load staticfiles %}
+{% block head %}
+    <script src="https://code.jquery.com/jquery-1.12.3.js"></script>
+
+
+
+    <link rel="stylesheet" href="{% static 'js/fancybox/jquery.fancybox.css'%}" type="text/css" media="screen" />
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js" ></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.12/sorting/natural.js" ></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" type="text/css" media="screen" charset="utf-8" />
+    <script src="{% static 'js/fancybox/jquery.fancybox.pack.js'%}"></script>
+   <style>
+  div.dataTables_wrapper {
+        margin-bottom: 3em;
+    }
+table {
+    font-family: monospace;
+    font-size:14px;
+    border-collapse: collapse;
+    width: 100%;
+
+
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    word-wrap: break-word;
+}
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+hr {
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 80%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup .close:hover {
+  color: #06D85F;
+}
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
+}
+
+
+</style>
+
+{% endblock %}
+
+
+{% block content_sub %}
+{% if msg %}
+
+<div class="col last span-9">
+<h3>{{ msg }}</h3>
+
+</div>
+{% else %}
+<div class="col last span-9">
+<h4>Pattern Number: {{ pattern_summary | get_num }}</h4>
+<table id="table1" class="display" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+    <th>Pattern</th>
+    <th>Number</th>
+
+    </tr>
+    </thead>
+    <tbody>
+{% for key,value in pattern_summary.items %}
+    <tr>
+    <td>{{ key | pattern }}</td>
+    <td>{{ value  }}</td>
+
+  </tr>
+
+{% endfor %}
+</tbody>
+</table>
+</div>
+<div class="col last span-9">
+<h4>Isolate Number: {{ pattern_single | get_sum }}</h4>
+<table id="table1_1" class="display" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+    <th>Pattern</th>
+    <th>Number</th>
+
+    </tr>
+    </thead>
+    <tbody>
+{% for key,value in pattern_single.items %}
+    <tr>
+    <td>{{ key }}</td>
+    <td>{{ value | pattern }}</td>
+
+  </tr>
+
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+
+<div class="col last span-9">
+<h4>Type Number: {{ types | get_num }}</h4>
+    <table id="table2" class="display"  cellspacing="0" width="100%">
+<thead>
+<tr>
+    <th >TYPE</th>
+    <th >AA Sequence</th>
+    <th >count</th>
+</tr>
+</thead>
+<tbody>
+{% for key,value in types.items %}
+ <tr>
+    <td>{% if value.index %}
+        T{{ value.index }}
+        {% else %}
+        R
+        {% endif %}
+    </td>
+    {% DNA_highlight key ref as line %}
+    <td >{{ line | safe }}</td>
+    <td >{{ value.count}}</td>
+  </tr>
+
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<div class="col last span-9">
+<table id="table3" class="display" cellspacing="0" width="100%">
+   <thead>
+    <tr>
+    <th>isolate</th>
+    <th>Pattern</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% for i in summary %}
+ <tr>
+    <td><a href="#{{ i.name }}" class="fancybox">{{ i.name  }}</a></td>
+    <td>{{ i.pattern | pattern }}</td>
+
+  </tr>
+
+{% endfor %}
+    </tbody>
+
+
+</table>
+
+
+
+</div>
+
+<div class="col last span-9">
+    <h4>Isolate Without Reference</h4>
+<table id="table3_1" class="display" cellspacing="0" width="100%">
+   <thead>
+    <tr>
+    <th>isolate</th>
+    <th>Pattern</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% for i in summary %}
+    {% if i.pattern %}
+    {% if i.same %}
+    {% else %}
+ <tr>
+    <td><a href="#{{ i.name }}" class="fancybox">{{ i.name  }}</a></td>
+    <td>{{ i.pattern | pattern }}</td>
+
+  </tr>
+{% endif %}
+{% endif %}
+
+{% endfor %}
+    </tbody>
+
+
+</table>
+
+
+</div>
+
+
+<div class="col last span-9">
+{% for s in sq %}
+<hr>
+<h2>{{ s.isolate }}</h2>
+
+<table id="{{ s.isolate }}" style="table-layout:fixed">
+
+{% for key,value in s.qlist.items %}
+    {% if key > 0 %}
+    <tr>
+    {% DNA_highlight value.con ref as line %}
+    <td width="580px">{{ line | safe}}</td>
+    <td width="20px">{{ value.number }}</td>
+    <td width="400px">T{{ key }}</td>
+    </tr>
+    {% else %}
+    <tr>
+
+    <td width="580px">{{ value.con }}</td>
+    <td width="20px">{{ value.number }}</td>
+    <td width="400px">Same to Reference</td>
+    </tr>
+    {% endif %}
+{% endfor %}
+ </table>
+
+{% endfor %}
+<hr>
+</div>
+
+
+
+
+{% endif %}
+{% endblock %}
+
+
+
+
+
+{% block script %}
+
+
+    $(document).ready(function() {
+    $('table.display').DataTable({
+ columnDefs: [
+       { type: 'natural', targets: 0 }
+     ]
+
+});
+} );
+
+$(document).ready(function() {
+		$(".fancybox").fancybox();
+	});
+
+
+
+{% endblock  %}
